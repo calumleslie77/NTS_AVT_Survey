@@ -10,7 +10,7 @@ The published application can be found [here](https://cleslie.shinyapps.io/NTS_A
 
 Run datacleaning.R to process the raw results in the /data folder. The processed results are saved in the data/output subfolder. 
 
-Then run ntsoutput7.R. This R script is dependent on the gomap.js and styles.css scripts. 
+Then run ntsoutput7.R. This R script is dependent on the gomap.js and styles.css files. 
 
 ## Important note
 
@@ -18,8 +18,8 @@ The application depends on a large number of images which are not included in th
 
 ## Licensing
 
-Survey results in /data folder copyright National Trust for Scotland 2026
+Survey results in /data folder copyright National Trust for Scotland 2026.
 
-All other code copyleft under [GNU GPL 3.0 (or later)](https://www.gnu.org/licenses/gpl-3.0.txt)
+All other code copyleft under [GNU GPL 3.0 (or later)](https://www.gnu.org/licenses/gpl-3.0.txt).
 
 Contact: calum.leslie@pm.me
