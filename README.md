@@ -1,4 +1,4 @@
-# NTS_AVT_Survey
+# NTS AVT Survey
 
 NTS ancient, veteran and notable tree surveys, 2024-26.
 
@@ -14,6 +14,5 @@ Then run ntsoutput7.R. This is a Shiny app which provides:
 
 3. Several interactive graphs introducing the data. 
 
-## Data is property of National Trust for Scotland 2026
+## Data is copyright of National Trust for Scotland 2026
 
-## All other code copyright Calum Leslie 2026
