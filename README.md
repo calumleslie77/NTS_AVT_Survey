@@ -14,11 +14,11 @@ Then run ntsoutput7.R. This R script is dependent on the gomap.js and styles.css
 
 ## Important note
 
-The application depends on a large number of images which are not included in this repository. However, these are included in the [published application](https://cleslie.shinyapps.io/NTS_AVT_Output/) hosted at shinyapps.io. 
+The application refers to a large number of images which are not included in this repository. However, these images are included in the [published application](https://cleslie.shinyapps.io/NTS_AVT_Output/) hosted at shinyapps.io (these images are copyright of the National Trust for Scotland, 2026).
 
 ## Licensing
 
-Survey results in /data folder copyright National Trust for Scotland 2026.
+Survey results in /data folder copyright National Trust for Scotland (2026).
 
 All other code copyleft under [GNU GPL 3.0 (or later)](https://www.gnu.org/licenses/gpl-3.0.txt).
 
