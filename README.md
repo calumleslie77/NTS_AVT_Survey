@@ -6,13 +6,13 @@ NTS ancient, veteran and notable tree surveys, 2024-26.
 
 Run datacleaning.R to prepare the raw geospatial data in the /data folder. 
 
-Then run ntsoutput7.R to output a Shiny app which provides: 
+Then run ntsoutput7.R. This is a Shiny app which provides: 
 
-An interactive Leaflet map of the survey results
+1. An interactive Leaflet map of the survey results
 
-An interactive datatable of the AVT results, with the option to download the dataset as .CSV
+2. An interactive datatable of the AVT results, with the option to download the dataset as .CSV
 
-Several interactive graphs introducing the data. 
+3. Several interactive graphs introducing the data. 
 
 ## Data is property of National Trust for Scotland 2026
 
