@@ -8,7 +8,7 @@ The published application can be found [here](https://cleslie.shinyapps.io/NTS_A
 
 ## Use
 
-Run datacleaning.R to process the raw results in the /data folder. The processed results are saved in the /output subfolder. 
+Run datacleaning.R to process the raw results in the /data folder. The processed results are saved in the data/output subfolder. 
 
 Then run ntsoutput7.R. This R script is dependent on the gomap.js and styles.css scripts. 
 
