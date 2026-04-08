@@ -14,7 +14,7 @@ Then run ntsoutput7.R. This R script is dependent on the gomap.js and styles.css
 
 ## Important note
 
-The application refers to a large number of images which are not included in this repository. However, these images are included in the [published application](https://cleslie.shinyapps.io/NTS_AVT_Output/) hosted at shinyapps.io (these images are copyright of the National Trust for Scotland, 2026).
+The application refers to a large number of images which are not included in this repository. However, these images are included in the [published application](https://cleslie.shinyapps.io/NTS_AVT_Output/) hosted at shinyapps.io (images copyright National Trust for Scotland, 2026).
 
 ## Licensing
 
