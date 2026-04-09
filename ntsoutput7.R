@@ -9,10 +9,11 @@ library(leafpop)
 library(leaflegend)
 library(rlang)
 library(paletteer)
+library(rsconnect)
 
 # set up ----
 
-setwd("~/GIS_projects/nts_output")
+#setwd("~/GIS-projects/nts_output")
 
 # AVT
 
@@ -127,11 +128,11 @@ ui <- navbarPage("NTS AVT Survey",
                                                                   choices = c('All' = "*", 
                                                                               'Parkland' = "Parkland",
                                                                               'Woodland' = "Woodland",
-                                                                              'Designed landscape' = "Designed_landscape",
-                                                                              'Wood pasture' = "Wood_pasture",
-                                                                              'Formal garden' = "Formal_garden",
+                                                                              'Designed landscape' = "Designed landscape",
+                                                                              'Wood pasture' = "Wood pasture",
+                                                                              'Formal garden' = "Formal garden",
                                                                               'Crags' = "Crags",
-                                                                              'Arable field' = "Arable field",
+                                                                              'Arable' = "Arable",
                                                                               'Other' = "Other")))
                               ),
                               column(3,
@@ -152,39 +153,14 @@ ui <- navbarPage("NTS AVT Survey",
                                                                     'Other holes or water pockets' = "Other holes or water pockets")))
                               )
                             ),
+                            fluidRow(
+                              hr(),
+                              downloadLink('downloadData', 'Download full dataset as CSV'),
+                              hr(),
+                              ),
                           DT::dataTableOutput("avttable")
                           )
                  ),
-                 tabPanel("NTS Site",
-                          fluidPage(    
-                            titlePanel("Species and AVT status by NTS site"),
-                            sidebarLayout(      
-                              sidebarPanel(
-                                selectInput("Site_name", "NTS Site:", 
-                                            choices = c('All' = "*", 
-                                                        'Balmacara' = "Balmacara",
-                                                        'Ben Lomond' = "Ben Lomond",
-                                                        'Castle Fraser' = "Castle Fraser",
-                                                        'House of the Binns' = "House of the Binns",
-                                                        'House of Dun' = "House of Dun",
-                                                        'Fyvie Castle' = "Fyvie Castle",
-                                                        'Leith Hall' = "Leith Hall")),
-                                hr(),
-                                selectInput("Threat1", "Threat status:", 
-                                            c('All' = "*", 
-                                              'Secure' = "Secure",
-                                              'Threatened' = "Threatened",
-                                              'Critical' = "Critical")),
-                                helpText("Choose a site")
-                              ),
-                              mainPanel(
-                                fillPage(
-                                  plotOutput("sitePlot", height = 800)  
-                                )
-                              )
-                              
-                            )
-                          )),
                  tabPanel("Site type",
                           fluidPage(    
                             titlePanel("Species and AVT status by site type"),
@@ -210,6 +186,7 @@ ui <- navbarPage("NTS AVT Survey",
                                                         'Arable field' = "Arable field",
                                                         'Other' = "Other")),
                                 hr(),
+                                htmlOutput("stypeText")
                               ),
                               mainPanel(
                                 plotOutput("stypePlot", height = 800)  
@@ -222,7 +199,7 @@ ui <- navbarPage("NTS AVT Survey",
                             titlePanel("Evidence of"),
                             sidebarLayout(      
                               sidebarPanel(
-                                selectInput("Site_name2", "Site name:", 
+                                selectInput("evsite", "Site name:", 
                                             choices = c('All' = "*", 
                                                         'Balmacara' = "Balmacara",
                                                         'Ben Lomond' = "Ben Lomond",
@@ -238,6 +215,7 @@ ui <- navbarPage("NTS AVT Survey",
                                                         'Fungi' = "Fungi",
                                                         'Invertebrate activity' = "Invertebrate activity")),
                                 hr(),
+                                htmlOutput("evText")
                               ),
                               mainPanel(
                                 plotOutput("batPlot", height = 800)  
@@ -438,6 +416,15 @@ ui <- navbarPage("NTS AVT Survey",
                               )
                             )
                           )),
+                 tabPanel("About",
+                          #fluidPage(    
+                          #   mainPanel(
+                          #    fillPage(
+                          htmlOutput("abText", height = 800)  
+                          #   )
+                          # ) 
+                          #)
+                 ),
                  conditionalPanel("false", icon("crosshair"))
 )
 
@@ -575,7 +562,7 @@ server <- function(input, output, session) {
     
     ptg <- paste('
     <div class="scroll-container">
-    <a href="', tg$i1, '" target="_blank"><img class="a" src="', tg$i1, '" alt="No more images" width=100% height=100% style="vertical-align:middle" onerror="this.onerror=null;this.src=tree.svg;"></a>
+    <a href="', tg$i1, '" target="_blank"><img class="a" src="', tg$i1, '" alt="No more images" width=100% height=100% style="vertical-align:middle"></a>
     <a href="', tg$i2, '" target="_blank"><img class="a" src="', tg$i2, '" alt="No more images" width=100% height=100% style="vertical-align:middle"></a>
     <a href="', tg$i3, '" target="_blank"><img class="a" src="', tg$i3, '" alt="No more images" width=100% height=100% style="vertical-align:middle"></a>
     <a href="', tg$i4, '" target="_blank"><img class="a" src="', tg$i4, '" alt="No more images" width=100% height=100% style="vertical-align:middle"></a>
@@ -805,7 +792,7 @@ server <- function(input, output, session) {
   # Data table output
   output$avttable <- DT::renderDataTable({
     df <- avt %>% 
-      mutate(Action = paste('<a class="go-map" href=""data-lat="', lat, '" data-lng="', lng, '" data-zip="', id,
+      mutate(Zoom = paste('<a class="go-map" href=""data-lat="', lat, '" data-lng="', lng, '" data-zip="', id,
                             '"><i class="fas fa-search-plus"></i></a>',
                             sep="")) 
     df$Epiphytes <- replace_na(df$Epiphytes, "NA")
@@ -816,7 +803,7 @@ server <- function(input, output, session) {
     df <- filter(df, grepl(input$dst, Site_name), grepl(input$dth, Threat_status), grepl(input$davt, AVT), 
                  grepl(input$dep, Epiphytes), grepl(input$dsp, Species), grepl(input$dev, Evidence_of), 
                  grepl(input$dsty, Site_type), grepl(input$ddw, Decaying_wood)) 
-    df <- select(df, Action, Date, Site_name, Species, AVT, Form, Status_life, Status_standing, Threat_status, 
+    df <- select(df, Zoom, Date, Site_name, Species, AVT, Form, Status_life, Status_standing, Threat_status, 
                  X10figGR, Site_type, Site_type_other, Girth_m, Girth_measurement_height, Epiphytes, Epiphyte_species, Evidence_of, Decaying_wood, Root_threat,
                  Trunk_threat, Crown_threat, Tree_threat, Grazing, Grazing_notes, Champion, Visible_tag, Notes, Proposed_action1_threattype, 
                  Proposed_action1_agent, Proposed_action1_swp, Proposed_action1_priority., Repeat_assessment., img_files)  
@@ -827,6 +814,15 @@ server <- function(input, output, session) {
     
     DT::datatable(df, filter="none", options = list(ajax = list(url = action), autoWidth = TRUE, scrollX = TRUE), escape = FALSE, rownames = TRUE, class = "nowrap")
   })
+  # Download button
+   output$downloadData <- downloadHandler(
+     filename = function() {
+       paste('avt-', Sys.Date(), '.csv', sep='')
+     },
+     content = function(con) {
+       write.csv(avt, con)
+     }
+   )
   # plots for tabs ----
   output$sitePlot <- renderPlot({
     i <- filter(avt, grepl(input$Site_name, Site_name), grepl(input$Threat1, Threat_status))
@@ -835,7 +831,7 @@ server <- function(input, output, session) {
       coord_flip() +
       xlab("") +
       #facet_wrap(~Site_name) +
-      ggtitle(input$Site_name, "Species, AVT") +
+      ggtitle(input$Site_name, "Tree species, AVT status") +
       scale_fill_manual(values = c("Ancient" = "#008080FF", "Veteran" = "#70A494FF", "Notable" = "#B4C8A8FF")) +
       theme_minimal()
   })
@@ -847,14 +843,23 @@ server <- function(input, output, session) {
       coord_flip() +
       xlab("") +
       #facet_wrap(~Site_name) +
-      ggtitle(t, "Species, AVT") +
+      ggtitle(t, "Tree species, AVT status") +
       scale_fill_manual(values = c("Ancient" = "#008080FF", "Veteran" = "#70A494FF", "Notable" = "#B4C8A8FF")) +
       theme_minimal()
   })
+  output$stypeText <- renderUI({
+    sty <- filter(avt, grepl(input$stysite, Site_name), grepl(input$Site_type, Site_type))
+    HTML(paste("<div>Count of trees by site type/surroundings. 
+              <hr>Total observations shown = <b>", nrow(sty), "</b>
+               <br>Proportion of total recorded trees = <b>", sprintf((nrow(sty)/nrow(avt))*100, fmt = '%#.2f'), "%</b>
+               <hr>Note: <b>", nrow(filter(avt, is.na(Site_type))), "</b> trees have no recorded surroundings value.
+               </div>"
+    ))
+  })
   output$batPlot <- renderPlot({
     #replace_na(avt$Evidence_of, "NA")
-    bb <- filter(avt, grepl(input$Site_name2, Site_name), grepl(input$evid, Evidence_of))
-    t <- paste(ifelse(input$Site_name2 == "*", "All sites", input$Site_name2), ": ",  
+    bb <- filter(avt, grepl(input$evsite, Site_name), grepl(input$evid, Evidence_of))
+    t <- paste(ifelse(input$evsite == "*", "All sites", input$evsite), ": ",  
                ifelse(input$evid == "*", "All", ifelse(input$evid == "potential", "Bats (potential habitat)", 
                                                        ifelse(input$evid == "presence", "Bats (presence/activity)", 
                                                               input$evid))))
@@ -863,9 +868,17 @@ server <- function(input, output, session) {
       coord_flip() +
       xlab("") +
       ylab("") +
-      ggtitle(t, "Species, AVT") +
+      ggtitle(t, "Host species, AVT status") +
       scale_fill_manual(values = c("Ancient" = "#008080FF", "Veteran" = "#70A494FF", "Notable" = "#B4C8A8FF")) +
       theme_minimal()
+  })
+  output$evText <- renderUI({
+    evv <- filter(avt, grepl(input$evsite, Site_name), grepl(input$evid, Evidence_of))
+    HTML(paste("<div>Count of trees with evidence of certain species. 
+              <hr>Total observations shown = <b>", nrow(evv), "</b>
+               <br>Proportion of total recorded trees = <b>", sprintf((nrow(evv)/nrow(avt))*100, fmt = '%#.2f'), "%</b>
+               </div>"
+    ))
   })
   output$dwPlot <- renderPlot({
     ddw <- filter(avt, !is.na(Threat_status), grepl(input$dw, Decaying_wood), grepl(input$dwsite, Site_name))
@@ -913,8 +926,6 @@ server <- function(input, output, session) {
                <br>Secure = <b>", nrow(filter(th, Threat_status == "Secure")), "</b>(", sprintf((nrow(filter(th, Threat_status == "Secure"))/nrow(th))*100, fmt = '%#.2f'), "%)
                               <br>Threatened = <b>", nrow(filter(th, Threat_status == "Threatened")), "</b>(", sprintf((nrow(filter(th, Threat_status == "Threatened"))/nrow(th))*100, fmt = '%#.2f'), "%)
                                              <br>Critical = <b>", nrow(filter(th, Threat_status == "Critical")), "</b>(", sprintf((nrow(filter(th, Threat_status == "Critical"))/nrow(th))*100, fmt = '%#.2f'), "%)
-
-
                </div>"
     ))
   })
@@ -1013,6 +1024,32 @@ server <- function(input, output, session) {
     HTML(paste("<div>Distribution of girth by species in metres. 
    <br>Numbers in white boxes indicate number of observations.
               <hr>Total observations shown = <b>", nrow(ge), "</b></div>"
+    ))
+  })
+  output$abText <- renderUI({
+    HTML(paste("<div style='background-color:floralwhite;padding:25px;text-align:left'>
+<h3>NTS AVT Survey 2025/6</h3>
+<p>Seven National Trust for Scotland properties were surveyed to gather data on the abundance, location and characteristics of ancient, veteran and notable trees.</p>
+<p>Three experienced ecologists used a custom <a href='qfield.org'>Qfield</a> project installed on Android tablets to collect the data. The following properties were surveyed:</p>
+<p><strong>Ben Lomond:</strong> 16-20 May 2025; 23-24 January 2026</p>
+<p><strong>Castle Fraser:</strong> 9-13 June 2025</p>
+<p><strong>House of the Binns:</strong> 1, 16, 22 July 2025; 4 September 2025</p>
+<p><strong>House of Dun:</strong> 20-21 November 2025; 8-9 December 2025</p>
+<p><strong>Fyvie Castle:</strong> 28 November 2025; 5, 18, 20 December 2025</p>
+<p><strong>Balmacara:</strong> 6-11 December 2025; 17-21 January 2026</p>
+<p><strong>Leith Hall:</strong> 9-10 December 2025</p>
+<p>Individual AVTs were recorded as point vector data and groups of trees were recorded as polygon vector data.</p>
+<p>The resulting point data are accurate to &lt;1m. The dataset contains latitude and longitude coordinates for each observation along with 10-figure Ordnance Survey grid references.</p>
+<p>Representative photos were taken of each tree and tree group using the tablets’ cameras. The metadata of these photos include the a timestamp and the latitude and longitude of the tablet’s position at the time the photograph was taken.</p>
+<p>Further data was gathered through the completion of a form by the surveyors when recording each observation. This data was designed in part to correspond to the <a href='https://ati.woodlandtrust.org.uk/'>Ancient Tree Inventory</a> maintained by the Woodland Trust.</p>
+<h3>Application</h3>
+<p>This <a href='https://shiny.posit.co/'>Shiny</a> application displays the survey results as an interactive map, a searchable datatable, and a set of interactive graphs.</p>
+<p>The full AVT dataset can be downloaded as a .csv spreadsheet using the link on the Datatable tab.</p>
+<p>The application’s source code can be viewed <a href='https://github.com/calumleslie77/NTS_AVT_Survey'>here</a>.</p>
+<h3>Licensing</h3>
+<p>All survey data, including images, copyright National Trust for Scotland.</p>
+<p>All other code copyleft under <a href='www.gnu.org/licenses/gpl-3.0.txt'>GNU GPL 3.0 (or later)</a>.</p>
+<p>Contact: calum.leslie@pm.me</p></div>"
     ))
   })
 }
