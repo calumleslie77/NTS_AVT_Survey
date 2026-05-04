@@ -13,7 +13,7 @@ library(rsconnect)
 
 # set up ----
 
-setwd("~/GIS_projects/nts_output")
+#setwd("~/GIS_projects/nts_output")
 
 # AVT
 
