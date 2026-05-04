@@ -87,7 +87,7 @@ avt$Species2 <- ifelse(test = grepl("Abies alba?|Abies alba", avt$Species), yes 
 avt$Species2 <- ifelse(test = grepl("Apple, probable hybrid|Apple = *", avt$Species), yes = "Apple", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Scot pine|Scots Pine|Scots pine 2", avt$Species), yes = "Scots pine", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Oak2.2", avt$Species), yes = "Oak", no = avt$Species2)
-avt$Species2 <- ifelse(test = grepl("Salix alba", avt$Species), yes = "White willow", no = avt$Species2)
+avt$Species2 <- ifelse(test = grepl("Salix alba|Salisbury", avt$Species), yes = "White willow", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Prunus serrulta 'Kanzan'", avt$Species), yes = "Cherry", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Eucalyptus gunnii", avt$Species), yes = "Cider gum", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Common walnut?", avt$Species), yes = "Walnut", no = avt$Species2)
