@@ -93,6 +93,7 @@ avt$Species2 <- ifelse(test = grepl("Eucalyptus gunnii", avt$Species), yes = "Ci
 avt$Species2 <- ifelse(test = grepl("Common walnut?", avt$Species), yes = "Walnut", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Alnus incana|Grey alder", avt$Species), yes = "Grey alder", no = avt$Species2)
 avt$Species2 <- ifelse(test = grepl("Crab", avt$Species), yes = "Crab apple", no = avt$Species2)
+avt$Species2 <- ifelse(test = grepl("Hazel", avt$Species), yes = "Hazel", no = avt$Species2)
 
 
 #sp2 <- avt %>%
