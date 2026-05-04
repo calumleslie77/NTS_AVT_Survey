@@ -13,7 +13,7 @@ library(rsconnect)
 
 # set up ----
 
-#setwd("~/GIS-projects/nts_output")
+setwd("~/GIS_projects/nts_output")
 
 # AVT
 
@@ -66,15 +66,15 @@ ui <- navbarPage("NTS AVT Survey",
                           fluidPage(
                             fluidRow(
                               column(3,
-                              selectInput("dst", "Site",
-                                          choices = c('All' = "*", 
-                                                      'Balmacara' = "Balmacara",
-                                                      'Ben Lomond' = "Ben Lomond",
-                                                      'Castle Fraser' = "Castle Fraser",
-                                                      'House of the Binns' = "House of the Binns",
-                                                      'House of Dun' = "House of Dun",
-                                                      'Fyvie Castle' = "Fyvie Castle",
-                                                      'Leith Hall' = "Leith Hall"))
+                                     selectInput("dst", "Site",
+                                                 choices = c('All' = "*", 
+                                                             'Balmacara' = "Balmacara",
+                                                             'Ben Lomond' = "Ben Lomond",
+                                                             'Castle Fraser' = "Castle Fraser",
+                                                             'House of the Binns' = "House of the Binns",
+                                                             'House of Dun' = "House of Dun",
+                                                             'Fyvie Castle' = "Fyvie Castle",
+                                                             'Leith Hall' = "Leith Hall"))
                               ),
                               column(3,
                                      conditionalPanel("input.davt", 
@@ -87,30 +87,30 @@ ui <- navbarPage("NTS AVT Survey",
                               ),
                               column(3,
                                      conditionalPanel("input.dst", 
-                                        selectInput("dth", "Threat status",
-                                                 choices = c('All' = "*", 
-                                                             'Secure' = "Secure",
-                                                             'Threatened' = "Threatened",
-                                                             'Critical' = "Critical")))
+                                                      selectInput("dth", "Threat status",
+                                                                  choices = c('All' = "*", 
+                                                                              'Secure' = "Secure",
+                                                                              'Threatened' = "Threatened",
+                                                                              'Critical' = "Critical")))
                               ),
-                            column(3,
-                                   conditionalPanel("input.dst",
-                            selectInput("dep", "Epiphytes", 
-                                        c('All' = "*", 
-                                          'Flying tree' = "'Flying' tree",
-                                          'Fern' = "Fern",
-                                          'Bryophyte' = "Bryophyte",
-                                          'Lichen' = "Lichen",
-                                          'Honeysuckle' = "Honeysuckle",
-                                          'Ivy' = "Ivy",
-                                          'Other' = "Other")))
-                            )
-                                   ),
+                              column(3,
+                                     conditionalPanel("input.dst",
+                                                      selectInput("dep", "Epiphytes", 
+                                                                  c('All' = "*", 
+                                                                    'Flying tree' = "'Flying' tree",
+                                                                    'Fern' = "Fern",
+                                                                    'Bryophyte' = "Bryophyte",
+                                                                    'Lichen' = "Lichen",
+                                                                    'Honeysuckle' = "Honeysuckle",
+                                                                    'Ivy' = "Ivy",
+                                                                    'Other' = "Other")))
+                              )
+                            ),
                             fluidRow(
                               column(3,
                                      selectInput("dsp", "Species",
                                                  choices = c('All' = "*",
-                                                 unique(avt$Species)))
+                                                             unique(avt$Species)))
                               ),
                               column(3,
                                      conditionalPanel("input.dsp", 
@@ -157,8 +157,8 @@ ui <- navbarPage("NTS AVT Survey",
                               hr(),
                               downloadLink('downloadData', 'Download full dataset as CSV'),
                               hr(),
-                              ),
-                          DT::dataTableOutput("avttable")
+                            ),
+                            DT::dataTableOutput("avttable")
                           )
                  ),
                  tabPanel("Site type",
@@ -353,16 +353,16 @@ ui <- navbarPage("NTS AVT Survey",
                           fluidPage(    
                             titlePanel("Epiphytes"),
                             sidebarLayout(
-                             sidebarPanel(
-                              selectInput("epsite", "Site:", 
-                                          choices = c('All' = "*", 
-                                                      'Balmacara' = "Balmacara",
-                                                      'Ben Lomond' = "Ben Lomond",
-                                                      'Castle Fraser' = "Castle Fraser",
-                                                      'House of the Binns' = "House of the Binns",
-                                                      'House of Dun' = "House of Dun",
-                                                      'Fyvie Castle' = "Fyvie Castle",
-                                                      'Leith Hall' = "Leith Hall")),
+                              sidebarPanel(
+                                selectInput("epsite", "Site:", 
+                                            choices = c('All' = "*", 
+                                                        'Balmacara' = "Balmacara",
+                                                        'Ben Lomond' = "Ben Lomond",
+                                                        'Castle Fraser' = "Castle Fraser",
+                                                        'House of the Binns' = "House of the Binns",
+                                                        'House of Dun' = "House of Dun",
+                                                        'Fyvie Castle' = "Fyvie Castle",
+                                                        'Leith Hall' = "Leith Hall")),
                                 selectInput("Epiphytes", "Epiphytes:", 
                                             c('All' = "*", 
                                               'Flying tree' = "'Flying' tree",
@@ -407,9 +407,9 @@ ui <- navbarPage("NTS AVT Survey",
                                               'Site' = "Site_name",
                                               'Site type' = "Site_type")),
                                 hr(),
-                              #  helpText(),
-                              #  hr(),
-                              htmlOutput("grText"),
+                                #  helpText(),
+                                #  hr(),
+                                htmlOutput("grText"),
                               ),
                               mainPanel(
                                 plotOutput("giPlot", height = 800)  
@@ -459,15 +459,15 @@ server <- function(input, output, session) {
     # If no trees are in view, don't plot
     if (nrow(TreesInBounds()) == 0)
       return(NULL)
-      th <- filter(TreesInBounds(), !is.na(Threat_status))
-      ggplot(th, aes(fill=factor(Threat_status, levels=c("Critical", "Threatened", "Secure")), x=fct_rev(fct_infreq(Threat_status)))) + 
-        geom_bar(position="stack", stat="count", alpha=.6, width=.4) +
-        coord_flip() +
-        ggtitle("Threat status") +
-        scale_fill_manual(values = c("Critical" = "red", "Threatened" = "orange", "Secure" = "#69b3a2"), guide = "none") +
-        #scale_fill_manual(values = c("Ancient" = "#008080FF", "Veteran" = "#70A494FF", "Notable" = "#B4C8A8FF")) +
-        labs(x = "", y = "", fill = "") +
-        theme_minimal()
+    th <- filter(TreesInBounds(), !is.na(Threat_status))
+    ggplot(th, aes(fill=factor(Threat_status, levels=c("Critical", "Threatened", "Secure")), x=fct_rev(fct_infreq(Threat_status)))) + 
+      geom_bar(position="stack", stat="count", alpha=.6, width=.4) +
+      coord_flip() +
+      ggtitle("Threat status") +
+      scale_fill_manual(values = c("Critical" = "red", "Threatened" = "orange", "Secure" = "#69b3a2"), guide = "none") +
+      #scale_fill_manual(values = c("Ancient" = "#008080FF", "Veteran" = "#70A494FF", "Notable" = "#B4C8A8FF")) +
+      labs(x = "", y = "", fill = "") +
+      theme_minimal()
   })
   # Plot table of visible tree species
   output$sptab <- DT::renderDT({
@@ -536,29 +536,29 @@ server <- function(input, output, session) {
         <div class="row">
                <div class="column">
                      <b>ID: </b>',avt$id, 
-                 '<br><b>Status: </b>', avt$AVT,
-                 '<br><b>Species: </b>', avt$Species,
-                 '<br><b>Site: </b>', avt$Site_name, 
-                 '<br><b>OSGR: </b>', avt$X10figGR, 
-                 '<br><b>Date: </b>', avt$Date, 
-                 '<br><b>Access: </b>', avt$Access, 
-                 '<br><b>TSRN: </b>', avt$Tree_safety_record, 
-                 '<br><b>Evidence of: </b>', avt$Evidence_of, 
-                 '<br><b>Crown_threat: </b>', avt$Crown_threat, 
-                 '<br><b>Epiphyte species: </b>', avt$Epiphyte_species,
-                 '<br><b>Public engagement: </b>', avt$public_engagement_notes, 
-                 '</div><div class="column">
+                  '<br><b>Status: </b>', avt$AVT,
+                  '<br><b>Species: </b>', avt$Species,
+                  '<br><b>Site: </b>', avt$Site_name, 
+                  '<br><b>OSGR: </b>', avt$X10figGR, 
+                  '<br><b>Date: </b>', avt$Date, 
+                  '<br><b>Access: </b>', avt$Access, 
+                  '<br><b>TSRN: </b>', avt$Tree_safety_record, 
+                  '<br><b>Evidence of: </b>', avt$Evidence_of, 
+                  '<br><b>Crown_threat: </b>', avt$Crown_threat, 
+                  '<br><b>Epiphyte species: </b>', avt$Epiphyte_species,
+                  '<br><b>Public engagement: </b>', avt$public_engagement_notes, 
+                  '</div><div class="column">
                      <b>Form: </b>', avt$Form, 
-                 '<br><b>Living: </b>', avt$Status_life, 
-                 '<br><b>Standing: </b>', avt$Status_standing, 
-                 '<br><b>Girth (m): </b>', avt$Girth_m, 
-                 '<br><b>Girth measured at (m): </b>', avt$Girth_measurement_height,
-                 '<br><b>Threat status: </b>', avt$Threat_status,
-                 '<br><b>Site type: </b>', avt$Site_type, 
-                 '<br><b>Decaying wood: </b>', avt$Decaying_wood,
-                 '<br><b>Grazed: </b>', avt$Grazing,
-                 '<br><b>Notes: </b>', avt$Notes, 
-                 '</div></div>') 
+                  '<br><b>Living: </b>', avt$Status_life, 
+                  '<br><b>Standing: </b>', avt$Status_standing, 
+                  '<br><b>Girth (m): </b>', avt$Girth_m, 
+                  '<br><b>Girth measured at (m): </b>', avt$Girth_measurement_height,
+                  '<br><b>Threat status: </b>', avt$Threat_status,
+                  '<br><b>Site type: </b>', avt$Site_type, 
+                  '<br><b>Decaying wood: </b>', avt$Decaying_wood,
+                  '<br><b>Grazed: </b>', avt$Grazing,
+                  '<br><b>Notes: </b>', avt$Notes, 
+                  '</div></div>') 
     
     ptg <- paste('
     <div class="scroll-container">
@@ -793,8 +793,8 @@ server <- function(input, output, session) {
   output$avttable <- DT::renderDataTable({
     df <- avt %>% 
       mutate(Zoom = paste('<a class="go-map" href=""data-lat="', lat, '" data-lng="', lng, '" data-zip="', id,
-                            '"><i class="fas fa-search-plus"></i></a>',
-                            sep="")) 
+                          '"><i class="fas fa-search-plus"></i></a>',
+                          sep="")) 
     df$Epiphytes <- replace_na(df$Epiphytes, "NA")
     df$Threat_status <- replace_na(df$Threat_status, "NA")
     df$Evidence_of <- replace_na(df$Evidence_of, "NA")
@@ -803,9 +803,9 @@ server <- function(input, output, session) {
     df <- filter(df, grepl(input$dst, Site_name), grepl(input$dth, Threat_status), grepl(input$davt, AVT), 
                  grepl(input$dep, Epiphytes), grepl(input$dsp, Species), grepl(input$dev, Evidence_of), 
                  grepl(input$dsty, Site_type), grepl(input$ddw, Decaying_wood)) 
-    df <- select(df, Zoom, Date, Site_name, Species, AVT, Form, Status_life, Status_standing, Threat_status, 
-                 X10figGR, Site_type, Site_type_other, Girth_m, Girth_measurement_height, Epiphytes, Epiphyte_species, Evidence_of, Decaying_wood, Root_threat,
-                 Trunk_threat, Crown_threat, Tree_threat, Grazing, Grazing_notes, Champion, Visible_tag, Notes, Proposed_action1_threattype, 
+    colnames(df)[colnames(df) == 'id'] <- 'ID'
+    df <- select(df, Zoom, ID, Date, Site_name, Species, AVT, Form, Threat_status, Notes, Status_life, Status_standing, X10figGR, Site_type, Site_type_other, Girth_m, Girth_measurement_height, Epiphytes, Epiphyte_species, Evidence_of, Decaying_wood, Root_threat,
+                 Trunk_threat, Crown_threat, Tree_threat, Grazing, Grazing_notes, Champion, Visible_tag, Proposed_action1_threattype, 
                  Proposed_action1_agent, Proposed_action1_swp, Proposed_action1_priority., Repeat_assessment., img_files)  
     #df <- select(df, -c(Tree_safety_record, Tree_threat, IrisBG, public_engagement_audio, img_files, i1, i2, i3, i4, i6, i7, i8, Time, ssrn, Example, id, 
     #                    x, y, Site_survey_record, Number_photos, Access, Recorder))
@@ -815,14 +815,14 @@ server <- function(input, output, session) {
     DT::datatable(df, filter="none", options = list(ajax = list(url = action), autoWidth = TRUE, scrollX = TRUE), escape = FALSE, rownames = TRUE, class = "nowrap")
   })
   # Download button
-   output$downloadData <- downloadHandler(
-     filename = function() {
-       paste('avt-', Sys.Date(), '.csv', sep='')
-     },
-     content = function(con) {
-       write.csv(avt, con)
-     }
-   )
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste('avt-', Sys.Date(), '.csv', sep='')
+    },
+    content = function(con) {
+      write.csv(avt, con)
+    }
+  )
   # plots for tabs ----
   output$sitePlot <- renderPlot({
     i <- filter(avt, grepl(input$Site_name, Site_name), grepl(input$Threat1, Threat_status))
@@ -863,7 +863,7 @@ server <- function(input, output, session) {
                ifelse(input$evid == "*", "All", ifelse(input$evid == "potential", "Bats (potential habitat)", 
                                                        ifelse(input$evid == "presence", "Bats (presence/activity)", 
                                                               input$evid))))
-        ggplot(bb, aes(fill = AVT, x=(fct_rev(fct_infreq(Species))))) +
+    ggplot(bb, aes(fill = AVT, x=(fct_rev(fct_infreq(Species))))) +
       geom_bar(position="stack", stat="count", alpha=.6, width=.4) +
       coord_flip() +
       xlab("") +
@@ -1003,10 +1003,10 @@ server <- function(input, output, session) {
       return(c(y = median(x)*1.05, label = length(x))) 
     }
     xl <- paste(levels(gi$Species))
-      xll <- paste(levels(gi$Species),"\nN=", table(gi$Species), sep="")
-      igc <- as_string(input$gc)
+    xll <- paste(levels(gi$Species),"\nN=", table(gi$Species), sep="")
+    igc <- as_string(input$gc)
     #xlabs <- xl #ifelse(nchar(input$Sitename3)>2, xll, xl)
-     # ifelse(nchar(input$Sitename3)>2, 
+    # ifelse(nchar(input$Sitename3)>2, 
     ggplot(gi, aes_string(x=igc, y="Girth_m")) + 
       geom_boxplot(fill="#69b3a2", alpha=0.2) + 
       stat_summary(fun.data = give.n, geom = "label", fun.y = median) + 
