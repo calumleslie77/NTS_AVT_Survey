@@ -22,6 +22,20 @@ avt <- st_read("data/output/avt_record_clean.gpkg")
 # assign fresh fids
 avt$id <- row_number(avt$Unique_tree_id)
 
+# Combine with site codes for an easy human-readable ID
+
+# First assign the official NTS site codes
+avt$sitecode <- ifelse(test = grepl("Castle Fraser", avt$Site_name), yes = "CAF", no = avt$Site_name)
+avt$sitecode <- ifelse(test = grepl("Leith Hall", avt$Site_name), yes = "LEH", no = avt$sitecode)
+avt$sitecode <- ifelse(test = grepl("Ben Lomond", avt$Site_name), yes = "BEL", no = avt$sitecode)
+avt$sitecode <- ifelse(test = grepl("Balmacara", avt$Site_name), yes = "BAL", no = avt$sitecode)
+avt$sitecode <- ifelse(test = grepl("House of Dun", avt$Site_name), yes = "HOD", no = avt$sitecode)
+avt$sitecode <- ifelse(test = grepl("House of the Binns", avt$Site_name), yes = "HOB", no = avt$sitecode)
+avt$sitecode <- ifelse(test = grepl("Fyvie Castle", avt$Site_name), yes = "FYC", no = avt$sitecode)
+
+# Then combine with the IDs
+avt$id_code <- sprintf("%s%s", avt$sitecode, avt$id)
+
 # Need to jitter the co-ords (don't ask)
 avt$lat <- jitter(avt$y)
 avt$lng <- jitter(avt$x)
@@ -803,7 +817,7 @@ server <- function(input, output, session) {
     df <- filter(df, grepl(input$dst, Site_name), grepl(input$dth, Threat_status), grepl(input$davt, AVT), 
                  grepl(input$dep, Epiphytes), grepl(input$dsp, Species), grepl(input$dev, Evidence_of), 
                  grepl(input$dsty, Site_type), grepl(input$ddw, Decaying_wood)) 
-    colnames(df)[colnames(df) == 'id'] <- 'ID'
+    colnames(df)[colnames(df) == 'id_code'] <- 'ID'
     df <- select(df, Zoom, ID, Date, Site_name, Species, AVT, Form, Threat_status, Notes, Status_life, Status_standing, X10figGR, Site_type, Site_type_other, Girth_m, Girth_measurement_height, Epiphytes, Epiphyte_species, Evidence_of, Decaying_wood, Root_threat,
                  Trunk_threat, Crown_threat, Tree_threat, Grazing, Grazing_notes, Champion, Visible_tag, Proposed_action1_threattype, 
                  Proposed_action1_agent, Proposed_action1_swp, Proposed_action1_priority., Repeat_assessment., img_files)  
